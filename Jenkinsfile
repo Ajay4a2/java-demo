@@ -2,15 +2,13 @@ pipeline {
     agent any
 
     stages {
-        stage('Install JDK 9') {
+        stage('Install OpenJDK') {
             steps {
-                echo '📥 Downloading and Extracting JDK 9.0.4'
+                echo '📥 Downloading and Extracting OpenJDK 11'
                 sh '''
-                    curl -L -b "oraclelicense=accept-securebackup-cookie" \
-                    -o jdk-9.0.4_linux-x64_bin.tar.gz \
-                    https://download.oracle.com/otn/java/jdk/9.0.4+11/b4a5c12014d54f4e9a5f42b269d5c7ed/jdk-9.0.4_linux-x64_bin.tar.gz
-
-                    tar -xzf jdk-9.0.4_linux-x64_bin.tar.gz
+                    curl -L -o openjdk11.tar.gz https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.20.1+1/OpenJDK11U-jdk_x64_linux_hotspot_11.0.20.1_1.tar.gz
+                    tar -xzf openjdk11.tar.gz
+                    mv jdk-11* openjdk11
                 '''
             }
         }
@@ -18,14 +16,14 @@ pipeline {
         stage('Compile') {
             steps {
                 echo '📦 Compiling Sample.java'
-                sh './jdk-9.0.4/bin/javac Sample.java'
+                sh './openjdk11/bin/javac Sample.java'
             }
         }
 
         stage('Run') {
             steps {
                 echo '🚀 Running Java Application'
-                sh './jdk-9.0.4/bin/java Sample'
+                sh './openjdk11/bin/java Sample'
             }
         }
     }
